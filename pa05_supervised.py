@@ -14,12 +14,19 @@ TASK 2 (30% of your grade):
 * Read the pdf publication on the website
 * Summarize it in 400 words here in this comment header (immediately following):
 
-SUMMARIZE HERE
 
-@author: YOU@mst.edu
+SUMMARIZE HERE
+The authors of this paper are trying to help make testing for breast cancer easier and less painful through testing dna taken through blood as opposed to the current tests used now which are compression plates which take both a decent amount of time and additionally are painful as the breasts are very tightly compressed during the procedure. There are other papers going around supporting the idea that there is a specific miRNA that indicates the presence of breast cancer and using a program to quickly find the presence of this miRNA could speed up the process of screening for cancer. They tested and trained on a lot of different types of data to see if they could really detect the presence of breast cancer accurately using samples taken from completely healthy old people as well as completely healthy middle aged people who had no history of cancer as well as samples taken from people with breast cancer and samples taken from people with breast problems but with no cancer. They used Fisher's line discriminant analysis as the basis of the statistical model created. The index score of 0 was used in order to indicated the presence of cancer while a score of less than 0 was used to indicate no breast cancer. The result of this study found that a combination of 5 different miRNAs could be used to decide if a sample had cancer miR-1246, miR-1307-3p, miR-4634, miR-6861-5p, and miR-6875-5p. The strength of the expressions of these miRNA determined whether the sample really had cancer. The training indicated an accuracy of 78.7 percent in the index. The diagnostic index showed an accuracy of 89.7 percent as opposed to the accuracy of the training index. The diagnostic index seemed to work well on all stages of cancer with most of the accuracy being above 90 percent. It seemed however, that any other issues besides cancer in the breasts may be recognized as cancer in this analysis as only 5 of the 54 samples were correctly identified as non-cancer. However it seems this model did not work as well the younger you were while becoming much more accurate the older the person the sample was taken from. In conclusion this study determined that finding one miRNA to indicate the presence of cancer was not advised as it was normally not very accurate however, if you the five miRNA expressions together you usually gain the correct answer with an accuracy of 89.7 percent.
+
+@author: jfhn6@mst.edu
 """
 
 import numpy as np
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+import pandas as pd
 # You can import anything else standard python, or that we have been using in class
 
 
@@ -27,10 +34,12 @@ class my_class_learning_wrapper():
     '''
     My learner: write some documentation here
     '''
-
+    
     def __init__(self):
         print('Any init you want')
-
+        #first we make it so that self will pass along the knn object so we can use it later on in the code
+        self.knn = KNeighborsClassifier()
+        
     def from_scratch(self):
         '''
         Hard-code this return value honestly.
@@ -39,13 +48,20 @@ class my_class_learning_wrapper():
         I will check when reading your code.
         '''
 
-        return 1
+        return 0
 
     def train(self, filename):
         '''
         This should input the train*.csv file, clean, format, and train your model
         '''
-
+        #then we tell it to load in the file, then make the column named breast cancer the expected test 
+        #results and then we remove that column from cancerTrain as we don't want this information to be used
+        #to find the correct answer, then we call knn and tell it to make it work using the two variables.
+        cancer = pd.read_csv(filename)
+        cancerTest = cancer['breast cancer']
+        cancerTrain = cancer.iloc[:,:-1]
+        self.knn.fit(cancerTrain, cancerTest)
+        
         print('\nTraining on the data passed in from', filename)
 
     def test(self, filename):
@@ -56,46 +72,17 @@ class my_class_learning_wrapper():
         You could cheat here by just returning the imported correct answer... don't!
         Make sure to exclude that final answer column from your learning model ;)
         '''
+        #first we load in the file that we will be running the test on,
+        #then we tell it to remove the answer column as that is still apparently there
+        #then we run predictions using our variable using our knn variable passed from train
+        cancer = pd.read_csv(filename)
+        cancerNew = cancer.iloc[:,:-1]
+        predictions = self.knn.predict(cancerNew)
 
         print('\nPredicting the class for each sample (cancer=1; benign=0) from',
               filename)
-
-        return np.array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1])
+        
+        return np.array(predictions)
 
     def helper_func_whatever(self):
         print('\nFor example, if you want to have cleaning and import as their own function')
